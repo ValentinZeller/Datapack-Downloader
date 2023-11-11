@@ -95,7 +95,7 @@ public class InstallDatapackScreen extends Screen {
 	@Override
 	public void render(DrawContext context, int mouseX, int mouseY, float delta) {
 		super.render(context, mouseX, mouseY, delta);
-		this.renderBackground(context, mouseX, mouseY, delta);
+		this.renderBackground(context);
 		context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 15, 0xFFFFFF);
 		context.drawTextWithShadow(this.textRenderer, "Search for worlds", 28, 26, 0xA0A0A0);
 		context.drawTextWithShadow(this.textRenderer, "Search for datapacks", 120 + 12 + 28 + 5, 26, 0xA0A0A0);
@@ -109,7 +109,13 @@ public class InstallDatapackScreen extends Screen {
 			this.datapackList.updateDatapacks(fetchProjects());
 		}
 	}
-
+	
+	@Override
+	public void tick() {
+		this.searchDatapacksField.tick();
+		this.searchWorldsField.tick();
+	}
+	
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
 		if (client != null && keyCode == GLFW.GLFW_KEY_ESCAPE) {
