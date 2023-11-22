@@ -110,6 +110,7 @@ public class InstallDatapackScreen extends Screen {
 		}
 	}
 
+
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
 		if (client != null && keyCode == GLFW.GLFW_KEY_ESCAPE) {
