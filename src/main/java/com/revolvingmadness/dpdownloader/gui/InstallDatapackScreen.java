@@ -58,9 +58,9 @@ public class InstallDatapackScreen extends Screen {
 		this.searchWorldsField.setChangedListener(search -> this.worldList.setSearch(search));
 		this.searchButton = ButtonWidget.builder(Text.of("Search"), button -> this.datapackList.updateDatapacks(this.fetchProjects())).dimensions(120 + 12 + 28 + 5 + (this.width - (28 * 2) - (120 + 12 + 5)) - 50, 36, 50, 24).build();
 		this.worldList = new DatapackWorldListWidget(this, this.client);
-		this.worldList.setLeftPos(28);
+		this.worldList.setX(28);
 		this.datapackList = new DatapackListWidget(this, this.client);
-		this.datapackList.setLeftPos(28 + 120 + 12 + 5);
+		this.datapackList.setX(28 + 120 + 12 + 5);
 		this.addSelectableChild(this.searchDatapacksField);
 		this.addSelectableChild(this.searchWorldsField);
 		this.addSelectableChild(this.searchButton);
@@ -109,7 +109,6 @@ public class InstallDatapackScreen extends Screen {
 			this.datapackList.updateDatapacks(fetchProjects());
 		}
 	}
-
 
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {

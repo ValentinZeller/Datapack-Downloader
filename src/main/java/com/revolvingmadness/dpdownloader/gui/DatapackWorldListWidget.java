@@ -18,7 +18,7 @@ public class DatapackWorldListWidget extends AlwaysSelectedEntryListWidget<Datap
 	String search = "";
 	
 	public DatapackWorldListWidget(InstallDatapackScreen parent, MinecraftClient client) {
-		super(client, 120 + 12, 100, 70, parent.height - 10, 12);
+		super(client, 120 + 12, 100, 70, 12);
 		this.loadLevels();
 	}
 	
@@ -72,7 +72,7 @@ public class DatapackWorldListWidget extends AlwaysSelectedEntryListWidget<Datap
 	
 	@Override
 	protected int getScrollbarPositionX() {
-		return this.right - 5;
+		return this.getRight() - 5;
 	}
 	
 	public String getSelected() {
