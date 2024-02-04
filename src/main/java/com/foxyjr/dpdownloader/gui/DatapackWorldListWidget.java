@@ -1,6 +1,6 @@
-package com.revolvingmadness.dpdownloader.gui;
+package com.foxyjr.dpdownloader.gui;
 
-import com.revolvingmadness.dpdownloader.Mod;
+import com.foxyjr.dpdownloader.Mod;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.FatalErrorScreen;

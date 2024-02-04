@@ -1,4 +1,4 @@
-package com.revolvingmadness.dpdownloader.gui;
+package com.foxyjr.dpdownloader.gui;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -17,7 +17,7 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 	private boolean resultsFound = false;
 	
 	public DatapackListWidget(InstallDatapackScreen screen, MinecraftClient client) {
-		super(client, screen.width - (28 * 2) - (120 + 12 + 10), 100, 70, screen.height - 10, 40);
+		super(client, screen.width - (28 * 2) - (120 + 12 + 10), screen.height - 80,  70,  40);
 		this.screen = screen;
 		if (screen.worldList.getSelectedOrNull() != null) {
 			this.updateDatapacks(this.screen.fetchProjects());
@@ -31,7 +31,7 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 	
 	@Override
 	protected int getScrollbarPositionX() {
-		return this.right - 5;
+		return this.getRight() - 5;
 	}
 	
 	public void updateDatapacks(ResultInfo resultInfo) {
@@ -49,16 +49,16 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 	}
 	
 	@Override
-	public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+	public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
 		if (this.screen.worldList.getSelectedOrNull() == null) {
-			context.drawTextWithShadow(this.client.textRenderer, Text.of("No World Selected!"), this.left + this.width / 2 - 40, this.top + 20, 0xAA0000);
+			context.drawTextWithShadow(this.client.textRenderer, Text.of("No World Selected!"), this.getX() + this.width / 2 - 40, this.getY() + 20, 0xAA0000);
 			return;
 		}
 		if (!this.resultsFound) {
-			context.drawTextWithShadow(this.client.textRenderer, Text.of("No Results Found!"), this.left + this.width / 2 - 40, this.top + 20, 0xAA0000);
+			context.drawTextWithShadow(this.client.textRenderer, Text.of("No Results Found!"), this.getX() + this.width / 2 - 40, this.getY() + 20, 0xAA0000);
 			return;
 		}
-		super.render(context, mouseX, mouseY, delta);
+		super.renderWidget(context, mouseX, mouseY, delta);
 	}
 	
 	public void setDatapacks(List<DatapackInfo> datapackInfo) {
@@ -93,8 +93,8 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 			context.drawTextWithShadow(this.client.textRenderer, this.info.title, x, y, 0xFFFFFF);
 			context.drawTextWithShadow(this.client.textRenderer, this.info.author, x, y + 12, 0x999999);
 			context.drawTextWithShadow(this.client.textRenderer, this.info.description, x, y + 25, 0x777777);
-			installButton.method_46421(entryWidth + 110);
-			installButton.method_46419(y);
+			installButton.setX(entryWidth + 110);
+			installButton.setY(y);
 			installButton.render(context, mouseX, mouseY, tickDelta);
 			if (this.installed) {
 				this.installButton.setMessage(Text.of("Uninstall"));

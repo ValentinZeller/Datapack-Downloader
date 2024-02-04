@@ -1,7 +1,7 @@
-package com.revolvingmadness.dpdownloader.gui;
+package com.foxyjr.dpdownloader.gui;
 
 import com.google.gson.Gson;
-import com.revolvingmadness.dpdownloader.Mod;
+import com.foxyjr.dpdownloader.Mod;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -58,9 +58,9 @@ public class InstallDatapackScreen extends Screen {
 		this.searchWorldsField.setChangedListener(search -> this.worldList.setSearch(search));
 		this.searchButton = ButtonWidget.builder(Text.of("Search"), button -> this.datapackList.updateDatapacks(this.fetchProjects())).dimensions(120 + 12 + 28 + 5 + (this.width - (28 * 2) - (120 + 12 + 5)) - 50, 36, 50, 24).build();
 		this.worldList = new DatapackWorldListWidget(this, this.client);
-		this.worldList.setLeftPos(28);
+		this.worldList.setX(28);
 		this.datapackList = new DatapackListWidget(this, this.client);
-		this.datapackList.setLeftPos(28 + 120 + 12 + 5);
+		this.datapackList.setX(28 + 120 + 12 + 5);
 		this.addSelectableChild(this.searchDatapacksField);
 		this.addSelectableChild(this.searchWorldsField);
 		this.addSelectableChild(this.searchButton);
@@ -95,7 +95,7 @@ public class InstallDatapackScreen extends Screen {
 	@Override
 	public void render(DrawContext context, int mouseX, int mouseY, float delta) {
 		super.render(context, mouseX, mouseY, delta);
-		this.renderBackground(context);
+		this.renderBackground(context, mouseX, mouseY, delta);
 		context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 15, 0xFFFFFF);
 		context.drawTextWithShadow(this.textRenderer, "Search for worlds", 28, 26, 0xA0A0A0);
 		context.drawTextWithShadow(this.textRenderer, "Search for datapacks", 120 + 12 + 28 + 5, 26, 0xA0A0A0);
@@ -109,13 +109,7 @@ public class InstallDatapackScreen extends Screen {
 			this.datapackList.updateDatapacks(fetchProjects());
 		}
 	}
-	
-	@Override
-	public void tick() {
-		this.searchDatapacksField.tick();
-		this.searchWorldsField.tick();
-	}
-	
+
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
 		if (client != null && keyCode == GLFW.GLFW_KEY_ESCAPE) {

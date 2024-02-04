@@ -1,6 +1,6 @@
-package com.revolvingmadness.dpdownloader.mixin;
+package com.foxyjr.dpdownloader.mixin;
 
-import com.revolvingmadness.dpdownloader.gui.InstallDatapackScreen;
+import com.foxyjr.dpdownloader.gui.InstallDatapackScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;

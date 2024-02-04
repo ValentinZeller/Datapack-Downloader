@@ -1,4 +1,6 @@
-# Datapack Downloader
+# Datapack Downloader (fork)
+
+Fork of this mod : [https://modrinth.com/mod/datapack-downloader](https://modrinth.com/mod/datapack-downloader)
 
 Download datapacks right into your game from Modrinth!
 

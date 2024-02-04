@@ -1,4 +1,4 @@
-package com.revolvingmadness.dpdownloader.mixin;
+package com.foxyjr.dpdownloader.mixin;
 
 import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;

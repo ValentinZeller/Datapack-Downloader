@@ -1,4 +1,4 @@
-package com.revolvingmadness.dpdownloader.gui;
+package com.foxyjr.dpdownloader.gui;
 
 import java.util.List;
 
