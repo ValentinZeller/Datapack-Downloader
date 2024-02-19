@@ -5,11 +5,12 @@
   "name": "Datapack Downloader (fork)",
   "description": "Download datapacks right into your game from Modrinth!",
   "authors": [
-    "RevolvingMadness"
+    "RevolvingMadness",
+    "Foxy_Jr"
   ],
   "contact": {
-    "homepage": "",
-    "sources": ""
+    "homepage": "https://modrinth.com/mod/datapack-downloader-(fork)",
+    "sources": "https://github.com/ValentinZeller/Datapack-Downloader"
   },
   "license": "MIT",
   "icon": "icon.png",
