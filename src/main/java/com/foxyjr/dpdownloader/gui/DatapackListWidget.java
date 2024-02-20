@@ -1,18 +1,20 @@
 package com.foxyjr.dpdownloader.gui;
 
-import com.foxyjr.dpdownloader.Mod;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackListWidget.DatapackEntry> {
 	private final InstallDatapackScreen screen;
@@ -20,8 +22,7 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 	public int moreIndex = 1;
 	
 	public DatapackListWidget(InstallDatapackScreen screen, MinecraftClient client) {
-		//TODO Item height
-		super(client, screen.width - (28) - (120 + 12 + 10), screen.height - 110,  70,  40);
+		super(client, screen.width/2 - 10, screen.height - 110,  70,  50);
 		this.screen = screen;
 		if (screen.worldList.getSelectedOrNull() != null) {
 			this.updateDatapacks(this.screen.fetchProjects(0), true);
@@ -39,7 +40,6 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 	}
 	
 	public void updateDatapacks(ResultInfo resultInfo, boolean isInit) {
-		Mod.LOGGER.debug(resultInfo.toString());
 		if (isInit) {
 			this.clearEntries();
 			screen.totalResult = resultInfo.hits().size();
@@ -59,7 +59,13 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 		}
 		return result;
 	}
-	
+
+	@Nullable
+	@Override
+	public DatapackEntry getSelectedOrNull() {
+		return super.getSelectedOrNull();
+	}
+
 	@Override
 	public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
 		if (this.screen.worldList.getSelectedOrNull() == null) {
@@ -72,7 +78,7 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 		}
 		super.renderWidget(context, mouseX, mouseY, delta);
 	}
-	
+
 	public void setDatapacks(List<DatapackInfo> datapackInfo) {
 		this.updateDatapacks(new ResultInfo(datapackInfo), true);
 	}
@@ -96,20 +102,19 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 			}).dimensions(0, 0, 50, 15).build();
 			this.installed = new File(this.screen.getDatapackPath(this.info.slug)).exists();
 		}
+
+		public DatapackInfo getInfo() {
+			return info;
+		}
 		
 		@Override
 		public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
 			this.x = x;
 			this.y = y;
 			this.width = entryWidth;
-			context.drawTextWithShadow(this.client.textRenderer, this.info.title, x, y, 0xFFFFFF);
-			context.drawTextWithShadow(this.client.textRenderer, this.info.author, x, y + 12, 0x999999);
-			context.drawTextWithShadow(this.client.textRenderer, client.textRenderer.trimToWidth(this.info.description, width - 10), x, y + 25, 0x777777);
-
-			//TODO Multiline
-			//final MultilineText multilineText = MultilineText.create(client.textRenderer, Text.literal(this.info.description), width - 10);
-			//multilineText.drawWithShadow(context, x, y + 25, 12, 0x777777);
-
+			context.drawTextWithShadow(this.client.textRenderer, this.info.title, x+5, y+5, 0xFFFFFF);
+			context.drawTextWithShadow(this.client.textRenderer, this.info.author, x+5, y + 17, 0x999999);
+			context.drawTextWithShadow(this.client.textRenderer, client.textRenderer.trimToWidth(this.info.description, width - 15), x+5, y + 30, 0x777777);
 			installButton.setX(entryWidth + 100);
 			installButton.setY(y);
 			installButton.render(context, mouseX, mouseY, tickDelta);
