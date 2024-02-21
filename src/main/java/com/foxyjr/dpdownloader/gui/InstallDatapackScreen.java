@@ -32,6 +32,7 @@ public class InstallDatapackScreen extends Screen {
 	private TextFieldWidget searchWorldsField;
 	private ButtonWidget searchButton;
 	private ButtonWidget moreButton;
+	private ButtonWidget backButton;
 	private final Screen parent;
 	public DatapackWorldListWidget worldList;
 	public DatapackListWidget datapackList;
@@ -53,6 +54,12 @@ public class InstallDatapackScreen extends Screen {
 		this.searchWorldsField.setText(oldSearchWorldsField);
 		this.datapackList.setDatapacks(oldDatapackInfo);
 	}
+
+	@Override
+	public void close() {
+		assert client != null;
+		client.setScreen(parent);
+	}
 	
 	@Override
 	protected void init() {
@@ -61,6 +68,7 @@ public class InstallDatapackScreen extends Screen {
 		this.searchWorldsField.setChangedListener(search -> this.worldList.setSearch(search));
 		this.searchButton = ButtonWidget.builder(Text.of("Search"), button -> this.datapackList.updateDatapacks(this.fetchProjects(0), true)).dimensions(120 + 12 + 28 + 5 + (this.width - (28 * 2) - (120 + 12 + 5)) - 50, 36, 50, 24).build();
 		this.moreButton = ButtonWidget.builder(Text.of("More results"), button -> this.datapackList.updateDatapacks(this.fetchProjects(100*this.datapackList.moreIndex), false)).dimensions(28, height - 30, 100, 24).build();
+		this.backButton = ButtonWidget.builder(Text.of("Back"), button -> this.close()).dimensions(width - 60, height -28, 50, 20).build();
 		this.worldList = new DatapackWorldListWidget(this, this.client);
 		this.worldList.setX(28);
 		this.datapackList = new DatapackListWidget(this, this.client);
@@ -74,6 +82,7 @@ public class InstallDatapackScreen extends Screen {
 		this.addSelectableChild(this.datapackList);
 		this.addSelectableChild(this.datapackInfoList);
 		this.addSelectableChild(this.moreButton);
+		this.addSelectableChild(this.backButton);
 	}
 
 	public ResultInfo fetchProjects(int offset) {
@@ -117,6 +126,7 @@ public class InstallDatapackScreen extends Screen {
 		}
 		this.searchButton.render(context, mouseX, mouseY, delta);
 		this.moreButton.render(context, mouseX, mouseY, delta);
+		this.backButton.render(context, mouseX, mouseY, delta);
 		this.searchDatapacksField.render(context, mouseX, mouseY, delta);
 		this.searchWorldsField.render(context, mouseX, mouseY, delta);
 		if (!Objects.equals(this.oldSelectedWorld, this.worldList.getSelected())) {
