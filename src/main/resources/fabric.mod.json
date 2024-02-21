@@ -10,7 +10,8 @@
   ],
   "contact": {
     "homepage": "https://modrinth.com/mod/datapack-downloader-(fork)",
-    "sources": "https://github.com/ValentinZeller/Datapack-Downloader"
+    "sources": "https://github.com/ValentinZeller/Datapack-Downloader",
+    "issues": "https://github.com/ValentinZeller/Datapack-Downloader/issues"
   },
   "license": "MIT",
   "icon": "icon.png",

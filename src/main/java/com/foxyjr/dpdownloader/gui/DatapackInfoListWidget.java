@@ -2,17 +2,19 @@ package com.foxyjr.dpdownloader.gui;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
+import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
+import net.minecraft.client.gui.screen.narration.NarrationPart;
+import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.text.StringVisitable;
 import net.minecraft.text.Text;
 
-//TODO rework
-public class DatapackInfoListWidget extends AlwaysSelectedEntryListWidget<DatapackInfoListWidget.DatapackInfoEntry> {
+public class DatapackInfoListWidget extends EntryListWidget<DatapackInfoListWidget.DatapackInfoEntry> {
     private final InstallDatapackScreen screen;
 
     public DatapackInfoListWidget(InstallDatapackScreen screen, MinecraftClient client) {
-        super(client, screen.width/2 - 180, screen.height - 110,  70,  40);
+        super(client, screen.width/2 - 250, screen.height - 110,  70,  40);
         this.screen = screen;
+        updateDatapack();
     }
 
     @Override
@@ -21,27 +23,43 @@ public class DatapackInfoListWidget extends AlwaysSelectedEntryListWidget<Datapa
             context.drawTextWithShadow(this.client.textRenderer, Text.of("No Datapack Selected!"), this.getX() + this.width / 2 - 40, this.getY() + 20, 0xAA0000);
             return;
         }
-        DatapackInfo info = screen.datapackList.getSelectedOrNull().getInfo();
-        context.drawTextWithShadow(this.client.textRenderer, info.title, this.getX() + 10, this.getY() + 10, 0xFFFFFF);
-        context.drawTextWithShadow(this.client.textRenderer, info.author, this.getX() + 10, this.getY() + 20, 0x999999);
-        for(int i = 0; i < client.textRenderer.wrapLines(StringVisitable.plain(info.description), this.width - 20).size(); i++) {
-            context.drawTextWithShadow(this.client.textRenderer, client.textRenderer.wrapLines(StringVisitable.plain(info.description), this.width - 10).get(i), this.getX() + 10, this.getY() + 30 + 10 * i, 0x777777);
-        }
 
         super.renderWidget(context, mouseX, mouseY, delta);
     }
 
-    public class DatapackInfoEntry extends AlwaysSelectedEntryListWidget.Entry<DatapackInfoEntry> {
+    public void updateDatapack() {
+        this.clearEntries();
+        if (screen.datapackList.getSelectedOrNull() != null) {
+            this.addEntry(new DatapackInfoEntry(client, screen.datapackList.getSelectedOrNull().getInfo()));
+        }
+    }
 
-        public DatapackInfoEntry(InstallDatapackScreen screen, MinecraftClient client, DatapackInfo info) {
+    @Override
+    protected void appendClickableNarrations(NarrationMessageBuilder builder) {
+        if (screen.datapackList.getSelectedOrNull() == null) {
+            builder.put(NarrationPart.TITLE, "No Datapack Selected!" );
+        } else {
+            builder.put(NarrationPart.TITLE, screen.datapackList.getSelectedOrNull().getInfo().title);
+        }
+    }
+
+    public class DatapackInfoEntry extends EntryListWidget.Entry<DatapackInfoEntry> {
+        private final MinecraftClient client;
+        private final DatapackInfo info;
+
+        public DatapackInfoEntry(MinecraftClient client, DatapackInfo info) {
+            this.client = client;
+            this.info = info;
         }
 
         @Override
-        public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) { }
-
-        @Override
-        public Text getNarration() {
-            return Text.of("Datapack Info");
+        public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+            context.drawTextWithShadow(this.client.textRenderer, info.title, x + 5, y + 10, 0xFFFFFF);
+            context.drawTextWithShadow(this.client.textRenderer, info.author, x + 5, y + 20, 0x999999);
+            for(int i = 0; i < client.textRenderer.wrapLines(StringVisitable.plain(info.description), entryWidth - 10).size() - 1; i++) {
+                context.drawTextWithShadow(this.client.textRenderer, client.textRenderer.wrapLines(StringVisitable.plain(info.description), entryWidth - 10).get(i), x + 5, y + 30 + 10 * i, 0x777777);
+            }
         }
+
     }
 }

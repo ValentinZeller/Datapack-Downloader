@@ -111,7 +111,7 @@ public class InstallDatapackScreen extends Screen {
 		this.worldList.render(context, mouseX, mouseY, delta);
 		this.datapackList.render(context, mouseX, mouseY, delta);
 		if (this.width >= 720) {
-			this.datapackInfoList.render(context, mouseX, mouseY, delta);
+			this.datapackInfoList.renderWidget(context, mouseX, mouseY, delta);
 		} else {
 			this.datapackList.setWidth(this.width - 200);
 		}
@@ -123,9 +123,9 @@ public class InstallDatapackScreen extends Screen {
 			this.oldSelectedWorld = this.worldList.getSelected();
 			this.datapackList.updateDatapacks(fetchProjects(0), true);
 		}
-		/*if (this.datapackInfoList.getSelectedOrNull() != null) {
-
-		}*/
+		if (this.datapackList.getSelectedOrNull() != null) {
+			this.datapackInfoList.updateDatapack();
+		}
 	}
 
 	@Override
