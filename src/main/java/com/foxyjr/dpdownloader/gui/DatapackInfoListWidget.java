@@ -56,7 +56,7 @@ public class DatapackInfoListWidget extends EntryListWidget<DatapackInfoListWidg
         public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
             context.drawTextWithShadow(this.client.textRenderer, info.title, x + 5, y + 10, 0xFFFFFF);
             context.drawTextWithShadow(this.client.textRenderer, info.author, x + 5, y + 20, 0x999999);
-            for(int i = 0; i < client.textRenderer.wrapLines(StringVisitable.plain(info.description), entryWidth - 10).size() - 1; i++) {
+            for(int i = 0; i < client.textRenderer.wrapLines(StringVisitable.plain(info.description), entryWidth - 10).size(); i++) {
                 context.drawTextWithShadow(this.client.textRenderer, client.textRenderer.wrapLines(StringVisitable.plain(info.description), entryWidth - 10).get(i), x + 5, y + 30 + 10 * i, 0x777777);
             }
         }
