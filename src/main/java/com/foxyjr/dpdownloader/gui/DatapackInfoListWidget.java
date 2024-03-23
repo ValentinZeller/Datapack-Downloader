@@ -5,6 +5,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.screen.narration.NarrationPart;
 import net.minecraft.client.gui.widget.EntryListWidget;
+import net.minecraft.text.ClickEvent;
 import net.minecraft.text.StringVisitable;
 import net.minecraft.text.Text;
 
@@ -56,8 +57,14 @@ public class DatapackInfoListWidget extends EntryListWidget<DatapackInfoListWidg
         public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
             context.drawTextWithShadow(this.client.textRenderer, info.title, x + 5, y + 10, 0xFFFFFF);
             context.drawTextWithShadow(this.client.textRenderer, info.author, x + 5, y + 20, 0x999999);
+            context.drawTextWithShadow(this.client.textRenderer,"⭳ " + info.downloads +" - ♡ " + info.follows, x + 5 , y, 0x777777);
+            context.drawTextWithShadow(this.client.textRenderer, info.license, x+5 , y+370 , 0x777777);
             for(int i = 0; i < client.textRenderer.wrapLines(StringVisitable.plain(info.description), entryWidth - 10).size(); i++) {
                 context.drawTextWithShadow(this.client.textRenderer, client.textRenderer.wrapLines(StringVisitable.plain(info.description), entryWidth - 10).get(i), x + 5, y + 30 + 10 * i, 0x777777);
+            }
+
+            for(int i = 0; i < info.display_categories.length; i++) {
+                context.drawTextWithShadow(this.client.textRenderer, info.display_categories[i], x + 5, y + 360 - i * 10, 0x999999);
             }
         }
 
