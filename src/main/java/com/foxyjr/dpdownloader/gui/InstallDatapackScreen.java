@@ -119,7 +119,7 @@ public class InstallDatapackScreen extends Screen {
 		context.drawTextWithShadow(this.textRenderer, "Results : "+this.totalResult, width / 2, height - 25, 0xA0A0A0);
 		this.worldList.render(context, mouseX, mouseY, delta);
 		this.datapackList.render(context, mouseX, mouseY, delta);
-		if (this.width >= 720) {
+		if (this.width >= 800) {
 			this.datapackInfoList.renderWidget(context, mouseX, mouseY, delta);
 		} else {
 			this.datapackList.setWidth(this.width - 200);

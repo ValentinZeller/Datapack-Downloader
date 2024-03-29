@@ -13,7 +13,7 @@ public class DatapackInfoListWidget extends EntryListWidget<DatapackInfoListWidg
     private final InstallDatapackScreen screen;
 
     public DatapackInfoListWidget(InstallDatapackScreen screen, MinecraftClient client) {
-        super(client, screen.width/2 - 250, screen.height - 110,  70,  40);
+        super(client, screen.width/2 - 170, screen.height - 110,  70,  40);
         this.screen = screen;
         updateDatapack();
     }
@@ -55,6 +55,7 @@ public class DatapackInfoListWidget extends EntryListWidget<DatapackInfoListWidg
 
         @Override
         public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+            x = screen.width / 2 + 160; //Fix offset
             context.drawTextWithShadow(this.client.textRenderer, info.title, x + 5, y + 10, 0xFFFFFF);
             context.drawTextWithShadow(this.client.textRenderer, info.author, x + 5, y + 20, 0x999999);
             context.drawTextWithShadow(this.client.textRenderer,"⭳ " + info.downloads +" - ♡ " + info.follows, x + 5 , y, 0x777777);

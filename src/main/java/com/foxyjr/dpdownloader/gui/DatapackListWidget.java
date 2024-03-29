@@ -112,7 +112,6 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 			context.drawTextWithShadow(this.client.textRenderer, this.info.title, x+5, y+5, 0xFFFFFF);
 			context.drawTextWithShadow(this.client.textRenderer, this.info.author, x+5, y + 17, 0x999999);
 			context.drawTextWithShadow(this.client.textRenderer, client.textRenderer.trimToWidth(this.info.description, width - 15), x+5, y + 30, 0x777777);
-			context.drawTextWithShadow(this.client.textRenderer,"⭳ " + info.downloads +" - ♡ " + info.follows, entryWidth - 5 , y + 5, 0x777777);
 			installButton.setX(entryWidth + 100);
 			installButton.setY(y);
 			installButton.render(context, mouseX, mouseY, tickDelta);
