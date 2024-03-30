@@ -8,6 +8,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.text.StringVisitable;
 import net.minecraft.text.Text;
 import org.apache.commons.io.FileUtils;
 import org.lwjgl.glfw.GLFW;
@@ -38,12 +39,19 @@ public class InstallDatapackScreen extends Screen {
 	public DatapackListWidget datapackList;
 	public DatapackInfoListWidget datapackInfoList;
 	private String oldSelectedWorld;
+	private String tempPath = "";
 	
 	public InstallDatapackScreen(Screen parent) {
-		super(Text.of("Install Datapacks"));
+		super(Text.translatable("datapackdownloader.title"));
 		this.parent = parent;
 	}
-	
+
+	public InstallDatapackScreen(Screen parent, String tempPath) {
+		super(Text.translatable("datapackdownloader.title"));
+		this.parent = parent;
+		this.tempPath = tempPath;
+	}
+
 	@Override
 	public void resize(MinecraftClient client, int width, int height) {
 		String oldSearchDatapacksField = this.searchDatapacksField.getText();
@@ -63,13 +71,13 @@ public class InstallDatapackScreen extends Screen {
 	
 	@Override
 	protected void init() {
-		this.searchDatapacksField = new TextFieldWidget(this.textRenderer, 120 + 12 + 28 + 5, 38, this.width - (28 * 2) - (120 + 12 + 5) - 56, 20, Text.of("Search datapacks"));
-		this.searchWorldsField = new TextFieldWidget(this.textRenderer, 28, 38, 132, 20, Text.of("Search worlds"));
+		this.searchDatapacksField = new TextFieldWidget(this.textRenderer, 120 + 12 + 28 + 5, 38, this.width - (28 * 2) - (120 + 12 + 5) - 56, 20, Text.translatable("datapackdownloader.field.search.datapack"));
+		this.searchWorldsField = new TextFieldWidget(this.textRenderer, 28, 38, 132, 20, Text.translatable("datapackdownloader.field.search.world"));
 		this.searchWorldsField.setChangedListener(search -> this.worldList.setSearch(search));
-		this.searchButton = ButtonWidget.builder(Text.of("Search"), button -> this.datapackList.updateDatapacks(this.fetchProjects(0), true)).dimensions(120 + 12 + 28 + 5 + (this.width - (28 * 2) - (120 + 12 + 5)) - 50, 36, 50, 24).build();
-		this.moreButton = ButtonWidget.builder(Text.of("More results"), button -> this.datapackList.updateDatapacks(this.fetchProjects(100*this.datapackList.moreIndex), false)).dimensions(28, height - 30, 100, 24).build();
-		this.backButton = ButtonWidget.builder(Text.of("Back"), button -> this.close()).dimensions(width - 60, height -28, 50, 20).build();
-		this.worldList = new DatapackWorldListWidget(this, this.client);
+		this.searchButton = ButtonWidget.builder(Text.translatable("datapackdownloader.button.search"), button -> this.datapackList.updateDatapacks(this.fetchProjects(0), true)).dimensions(120 + 12 + 28 + 5 + (this.width - (28 * 2) - (120 + 12 + 5)) - 50, 36, 50, 24).build();
+		this.moreButton = ButtonWidget.builder(Text.translatable("datapackdownloader.button.results"), button -> this.datapackList.updateDatapacks(this.fetchProjects(100*this.datapackList.moreIndex), false)).dimensions(28, height - 30, 100, 24).build();
+		this.backButton = ButtonWidget.builder(Text.translatable("datapackdownloader.button.back"), button -> this.close()).dimensions(width - 60, height -28, 50, 20).build();
+		this.worldList = new DatapackWorldListWidget(this, this.client, tempPath);
 		this.worldList.setX(28);
 		this.datapackList = new DatapackListWidget(this, this.client);
 		this.datapackList.setX(28 + 120 + 12 + 5);
@@ -114,10 +122,19 @@ public class InstallDatapackScreen extends Screen {
 		super.render(context, mouseX, mouseY, delta);
 		this.renderBackground(context, mouseX, mouseY, delta);
 		context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 15, 0xFFFFFF);
-		context.drawTextWithShadow(this.textRenderer, "Search for worlds", 28, 26, 0xA0A0A0);
-		context.drawTextWithShadow(this.textRenderer, "Search for datapacks", 120 + 12 + 28 + 5, 26, 0xA0A0A0);
-		context.drawTextWithShadow(this.textRenderer, "Results : "+this.totalResult, width / 2, height - 25, 0xA0A0A0);
-		this.worldList.render(context, mouseX, mouseY, delta);
+		context.drawTextWithShadow(this.textRenderer, Text.translatable("datapackdownloader.label.search.datapacks"), 120 + 12 + 28 + 5, 26, 0xA0A0A0);
+		context.drawTextWithShadow(this.textRenderer, Text.translatable("datapackdownloader.label.results", this.totalResult), width / 2, height - 25, 0xA0A0A0);
+
+		if (tempPath.equals("")) {
+			this.searchWorldsField.render(context, mouseX, mouseY, delta);
+			context.drawTextWithShadow(this.textRenderer, Text.translatable("datapackdownloader.label.search.worlds"), 28, 26, 0xA0A0A0);
+			this.worldList.render(context, mouseX, mouseY, delta);
+		} else {
+			for(int i = 0; i < (client != null ? client.textRenderer.wrapLines(Text.translatable("datapackdownloader.download.warning"), 132 - 10).size() : 0); i++) {
+				context.drawTextWithShadow(this.client.textRenderer, client.textRenderer.wrapLines(Text.translatable("datapackdownloader.download.warning"), 132 - 10).get(i), 28, 30 + 10 * i, 0xFFFFFF);
+			}
+		}
+
 		this.datapackList.render(context, mouseX, mouseY, delta);
 		if (this.width >= 800) {
 			this.datapackInfoList.renderWidget(context, mouseX, mouseY, delta);
@@ -128,7 +145,7 @@ public class InstallDatapackScreen extends Screen {
 		this.moreButton.render(context, mouseX, mouseY, delta);
 		this.backButton.render(context, mouseX, mouseY, delta);
 		this.searchDatapacksField.render(context, mouseX, mouseY, delta);
-		this.searchWorldsField.render(context, mouseX, mouseY, delta);
+
 		if (!Objects.equals(this.oldSelectedWorld, this.worldList.getSelected())) {
 			this.oldSelectedWorld = this.worldList.getSelected();
 			this.datapackList.updateDatapacks(fetchProjects(0), true);
@@ -188,7 +205,11 @@ public class InstallDatapackScreen extends Screen {
 		if (this.client == null) {
 			return "";
 		}
-		
+
+		if (!tempPath.equals("")) {
+			return tempPath + "/" + slug + ".zip";
+		}
+
 		return this.client.getLevelStorage().getSavesDirectory().toAbsolutePath() + "/" + this.worldList.getSelected() + "/datapacks/" + slug + ".zip";
 	}
 }

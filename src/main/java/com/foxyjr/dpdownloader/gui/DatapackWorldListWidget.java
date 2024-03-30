@@ -16,10 +16,15 @@ import java.util.List;
 public class DatapackWorldListWidget extends AlwaysSelectedEntryListWidget<DatapackWorldListWidget.WorldEntry> {
 	final List<DatapackWorldListWidget.WorldEntry> worlds = new ArrayList<>();
 	String search = "";
+	String tempPath;
 	
-	public DatapackWorldListWidget(InstallDatapackScreen parent, MinecraftClient client) {
+	public DatapackWorldListWidget(InstallDatapackScreen parent, MinecraftClient client, String temp) {
 		super(client, 120 + 12, 100, 70, 12);
-		this.loadLevels();
+		tempPath = temp;
+		if (tempPath.equals("")) {
+			this.loadLevels();
+		}
+
 	}
 	
 	private void loadLevels() {
@@ -99,7 +104,7 @@ public class DatapackWorldListWidget extends AlwaysSelectedEntryListWidget<Datap
 		
 		@Override
 		public Text getNarration() {
-			return Text.of("Datapack World List");
+			return Text.translatable("datapackdownloader.narration.world");
 		}
 		
 		@Override

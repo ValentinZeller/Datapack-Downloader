@@ -21,7 +21,7 @@ public class DatapackInfoListWidget extends EntryListWidget<DatapackInfoListWidg
     @Override
     public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
         if (screen.datapackList.getSelectedOrNull() == null) {
-            context.drawTextWithShadow(this.client.textRenderer, Text.of("No Datapack Selected!"), this.getX() + this.width / 2 - 40, this.getY() + 20, 0xAA0000);
+            context.drawTextWithShadow(this.client.textRenderer, Text.translatable("datapackdownloader.error.datapackinfo.datapack"), this.getX() + this.width / 2 - 40, this.getY() + 20, 0xAA0000);
             return;
         }
 
@@ -38,7 +38,7 @@ public class DatapackInfoListWidget extends EntryListWidget<DatapackInfoListWidg
     @Override
     protected void appendClickableNarrations(NarrationMessageBuilder builder) {
         if (screen.datapackList.getSelectedOrNull() == null) {
-            builder.put(NarrationPart.TITLE, "No Datapack Selected!" );
+            builder.put(NarrationPart.TITLE, Text.translatable("datapackdownloader.error.datapackinfo.datapack") );
         } else {
             builder.put(NarrationPart.TITLE, screen.datapackList.getSelectedOrNull().getInfo().title);
         }

@@ -21,7 +21,7 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 	public DatapackListWidget(InstallDatapackScreen screen, MinecraftClient client) {
 		super(client, screen.width/2 - 10, screen.height - 110,  70,  50);
 		this.screen = screen;
-		if (screen.worldList.getSelectedOrNull() != null) {
+		if (screen.worldList.getSelectedOrNull() != null || !screen.worldList.tempPath.equals("")) {
 			this.updateDatapacks(this.screen.fetchProjects(0), true);
 		}
 	}
@@ -65,12 +65,12 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 
 	@Override
 	public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-		if (this.screen.worldList.getSelectedOrNull() == null) {
-			context.drawTextWithShadow(this.client.textRenderer, Text.of("No World Selected!"), this.getX() + this.width / 2 - 40, this.getY() + 20, 0xAA0000);
+		if (this.screen.worldList.getSelectedOrNull() == null && this.screen.worldList.tempPath.equals("")) {
+			context.drawTextWithShadow(this.client.textRenderer, Text.translatable("datapackdownloader.error.datapack.world"), this.getX() + this.width / 2 - 40, this.getY() + 20, 0xAA0000);
 			return;
 		}
 		if (!this.resultsFound) {
-			context.drawTextWithShadow(this.client.textRenderer, Text.of("No Results Found!"), this.getX() + this.width / 2 - 40, this.getY() + 20, 0xAA0000);
+			context.drawTextWithShadow(this.client.textRenderer, Text.translatable("datapackdownloader.error.datapack.result"), this.getX() + this.width / 2 - 40, this.getY() + 20, 0xAA0000);
 			return;
 		}
 		super.renderWidget(context, mouseX, mouseY, delta);
@@ -116,9 +116,9 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 			installButton.setY(y);
 			installButton.render(context, mouseX, mouseY, tickDelta);
 			if (this.installed) {
-				this.installButton.setMessage(Text.of("Uninstall"));
+				this.installButton.setMessage(Text.translatable("datapackdownloader.button.datapack.uninstall"));
 			} else {
-				this.installButton.setMessage(Text.of("Install"));
+				this.installButton.setMessage(Text.translatable("datapackdownloader.button.datapack.install"));
 			}
 		}
 		
@@ -146,7 +146,7 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 		
 		@Override
 		public Text getNarration() {
-			return Text.of("Datapack List");
+			return Text.translatable("datapackdownloader.narration.datapack");
 		}
 	}
 }
