@@ -8,7 +8,6 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.text.StringVisitable;
 import net.minecraft.text.Text;
 import org.apache.commons.io.FileUtils;
 import org.lwjgl.glfw.GLFW;
