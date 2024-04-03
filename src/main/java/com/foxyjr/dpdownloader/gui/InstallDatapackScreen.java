@@ -209,6 +209,10 @@ public class InstallDatapackScreen extends Screen {
 			return tempPath + "/" + slug + ".zip";
 		}
 
+		if (this.worldList.getSelected().equals("Global Datapack (mod)")) {
+			return FabricLoader.getInstance().getGameDir().resolve("datapacks") + "/"+ slug + ".zip";
+		}
+
 		return this.client.getLevelStorage().getSavesDirectory().toAbsolutePath() + "/" + this.worldList.getSelected() + "/datapacks/" + slug + ".zip";
 	}
 }

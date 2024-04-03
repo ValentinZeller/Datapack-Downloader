@@ -1,6 +1,7 @@
 package com.foxyjr.dpdownloader.gui;
 
 import com.foxyjr.dpdownloader.Mod;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.FatalErrorScreen;
@@ -43,6 +44,10 @@ public class DatapackWorldListWidget extends AlwaysSelectedEntryListWidget<Datap
 			levelSummaries.forEach(levelSummary -> this.worlds.add(new WorldEntry(this.client, levelSummary.getDisplayName())));
 			this.showSummaries("", this.worlds);
 		});
+
+		if (FabricLoader.getInstance().isModLoaded("global-datapack")) {
+			this.worlds.add(new WorldEntry(this.client, "Global Datapack (mod)"));
+		}
 	}
 	
 	private void showUnableToLoadScreen(Text message) {
