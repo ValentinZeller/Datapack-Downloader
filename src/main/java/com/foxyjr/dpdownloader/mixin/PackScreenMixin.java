@@ -37,7 +37,7 @@ public class PackScreenMixin {
                                 assert file != null;
                                 MinecraftClient.getInstance().setScreen(new InstallDatapackScreen(currentScreen, file.toString()));
                             }
-                    ).dimensions(((Screen) (Object) this).width / 2 + 160, y, 160, 20)
+                    ).dimensions(((Screen) (Object) this).width / 2 - 70, y + 24, 140, 20)
                             .tooltip(Tooltip.of(Text.translatable("datapackdownloader.download.warning")))
                             .build());
         }

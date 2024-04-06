@@ -1,0 +1,20 @@
+{
+  "datapackdownloader.title": "Installer packs de données",
+  "datapackdownloader.download": "Télécharger packs de données",
+  "datapackdownloader.download.warning": "Cela ne fait que ajouter les packs de données dans le dossier, installez les dans le menu 'Packs de données'.",
+  "datapackdownloader.field.search.datapack": "Recherche de packs de données",
+  "datapackdownloader.field.search.world": "Recherche de mondes",
+  "datapackdownloader.button.search": "Rechercher",
+  "datapackdownloader.button.results": "Plus de résultats ",
+  "datapackdownloader.button.back": "Retour",
+  "datapackdownloader.label.search.worlds": "Recherche de mondes",
+  "datapackdownloader.label.search.datapacks": "Recherche de packs de données",
+  "datapackdownloader.label.results": "Résultats : %d",
+  "datapackdownloader.narration.world": "Liste de monde pour packs de données",
+  "datapackdownloader.narration.datapack": "Liste de packs de données",
+  "datapackdownloader.button.datapack.uninstall": "Désinstaller",
+  "datapackdownloader.button.datapack.install": "Installer",
+  "datapackdownloader.error.datapack.world": "Aucun monde sélectionné !",
+  "datapackdownloader.error.datapack.result": "Aucun résultats trouvés !",
+  "datapackdownloader.error.datapackinfo.datapack": "Aucun pack de données sélectionné !"
+}
