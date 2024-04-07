@@ -201,7 +201,7 @@ public class InstallDatapackScreen extends Screen {
 	}
 	
 	protected String getDatapackPath(String slug) {
-		if (this.client == null) {
+		if (this.client == null || (this.worldList.getSelected() == null && tempPath.equals(""))) {
 			return "";
 		}
 
