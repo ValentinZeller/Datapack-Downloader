@@ -45,6 +45,7 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 			screen.totalResult += resultInfo.hits().size();
 		}
 
+		this.screen.readJson();
 		resultInfo.hits().forEach(info -> this.addEntry(new DatapackEntry(this.screen, this.client, info)));
 		this.resultsFound = resultInfo.hits().size() != 0 || !isInit;
 	}
@@ -85,6 +86,7 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 		private final MinecraftClient client;
 		private final DatapackInfo info;
 		private final ButtonWidget installButton;
+		private final ButtonWidget updateButton;
 		private int x;
 		private int y;
 		private int width;
@@ -95,8 +97,12 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 			this.client = client;
 			this.info = info;
 			this.installButton = ButtonWidget.builder(Text.of(""), button -> {
-			
 			}).dimensions(0, 0, 50, 15).build();
+
+			this.updateButton = ButtonWidget.builder(Text.translatable("datapackdownloader.button.datapack.update"), button -> {
+
+			}).dimensions(0, 0, 50 ,15).build();
+
 			this.installed = new File(this.screen.getDatapackPath(this.info.slug)).exists();
 		}
 
@@ -117,6 +123,10 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 			installButton.render(context, mouseX, mouseY, tickDelta);
 			if (this.installed) {
 				this.installButton.setMessage(Text.translatable("datapackdownloader.button.datapack.uninstall"));
+				if (this.screen.isOutdated(info.slug,info.latest_version)) {
+					this.updateButton.setPosition(entryWidth + 50, y);
+					this.updateButton.render(context, mouseX, mouseY, tickDelta);
+				}
 			} else {
 				this.installButton.setMessage(Text.translatable("datapackdownloader.button.datapack.install"));
 			}
@@ -129,17 +139,19 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 			}
 			if (mouseX > this.x + this.width - 55 && mouseX < this.x + this.width + 5 && mouseY > this.y - 5 && mouseY < this.y + 20) {
 				if (this.installed) {
-					try {
-						Files.deleteIfExists(new File(this.screen.getDatapackPath(this.info.slug)).toPath());
-					} catch (IOException e) {
-						e.printStackTrace();
+					if (!this.screen.uninstallDatapack(this.info.slug)) {
 						return true;
 					}
 				} else {
-					this.screen.installDatapack(this.info.slug);
+					this.screen.installDatapack(this.info.slug, this.info.latest_version);
 				}
 				this.installed = !this.installed;
 			}
+
+			if (mouseX > this.x + this.width - 115 && mouseX < this.x + this.width - 55 && mouseY > this.y - 5 && mouseY < this.y +20) {
+				this.screen.updateDatapack(info.slug,info.latest_version);
+			}
+
 			DatapackListWidget.this.setSelected(this);
 			return true;
 		}

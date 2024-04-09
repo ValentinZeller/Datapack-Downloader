@@ -14,6 +14,7 @@
   "datapackdownloader.narration.datapack": "Liste de packs de données",
   "datapackdownloader.button.datapack.uninstall": "Désinstaller",
   "datapackdownloader.button.datapack.install": "Installer",
+  "datapackdownloader.button.datapack.update": "Mettre à jour",
   "datapackdownloader.error.datapack.world": "Aucun monde sélectionné !",
   "datapackdownloader.error.datapack.result": "Aucun résultats trouvés !",
   "datapackdownloader.error.datapackinfo.datapack": "Aucun pack de données sélectionné !"

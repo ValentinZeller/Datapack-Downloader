@@ -14,6 +14,7 @@
   "datapackdownloader.narration.datapack": "Datapack List",
   "datapackdownloader.button.datapack.uninstall": "Uninstall",
   "datapackdownloader.button.datapack.install": "Install",
+  "datapackdownloader.button.datapack.update": "Update",
   "datapackdownloader.error.datapack.world": "No World Selected!",
   "datapackdownloader.error.datapack.result": "No Results Found!",
   "datapackdownloader.error.datapackinfo.datapack": "No Datapack Selected!"

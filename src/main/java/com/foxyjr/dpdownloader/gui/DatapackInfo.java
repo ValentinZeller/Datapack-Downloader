@@ -9,9 +9,9 @@ public class DatapackInfo {
 	final String downloads;
 	final String follows;
 	final String[] display_categories;
-
+	final String latest_version;
 	
-	public DatapackInfo(String title, String description, String author, String slug, String license, String downloads, String follows, String[] display_categories) {
+	public DatapackInfo(String title, String description, String author, String slug, String license, String downloads, String follows, String[] display_categories, String latest_version) {
 		this.title = title;
 		this.description = description;
 		this.author = author;
@@ -20,5 +20,6 @@ public class DatapackInfo {
 		this.downloads = downloads;
 		this.follows = follows;
 		this.display_categories = display_categories;
+		this.latest_version = latest_version;
 	}
 }

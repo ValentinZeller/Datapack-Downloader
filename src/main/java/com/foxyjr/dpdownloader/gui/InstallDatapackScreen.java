@@ -1,6 +1,6 @@
 package com.foxyjr.dpdownloader.gui;
 
-import com.google.gson.Gson;
+import com.google.gson.*;
 import com.foxyjr.dpdownloader.Mod;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
@@ -12,8 +12,7 @@ import net.minecraft.text.Text;
 import org.apache.commons.io.FileUtils;
 import org.lwjgl.glfw.GLFW;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -22,9 +21,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.nio.file.Files;
+import java.util.*;
 
 public class InstallDatapackScreen extends Screen {
 	public int totalResult = 0;
@@ -39,6 +37,7 @@ public class InstallDatapackScreen extends Screen {
 	public DatapackInfoListWidget datapackInfoList;
 	private String oldSelectedWorld;
 	private String tempPath = "";
+	private JsonObject datapackDownloaderData = new JsonObject();
 	
 	public InstallDatapackScreen(Screen parent) {
 		super(Text.translatable("datapackdownloader.title"));
@@ -163,7 +162,7 @@ public class InstallDatapackScreen extends Screen {
 		return super.keyPressed(keyCode, scanCode, modifiers);
 	}
 	
-	public void installDatapack(String slug) {
+	public void installDatapack(String slug, String latest_version) {
 		if (this.client == null) {
 			return;
 		}
@@ -194,10 +193,66 @@ public class InstallDatapackScreen extends Screen {
 			String url = file.url;
 			try {
 				FileUtils.copyURLToFile(new URL(url), new File(getDatapackPath(slug)));
+				writeJson(slug, latest_version);
 			} catch (IOException e) {
 				return;
 			}
 		}
+	}
+
+	public boolean uninstallDatapack(String slug) {
+		try {
+			Files.deleteIfExists(new File(this.getDatapackPath(slug)).toPath());
+			deleteJson(slug);
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public void updateDatapack(String slug, String latest_version) {
+		uninstallDatapack(slug);
+		installDatapack(slug, latest_version);
+	}
+
+	public void readJson() {
+		try {
+			FileReader file = new FileReader(getWorldPath() + "datapackdownloader.json");
+			this.datapackDownloaderData = JsonParser.parseReader(file).getAsJsonObject();
+			file.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void writeJson(String slug, String version) {
+		this.datapackDownloaderData.addProperty(slug, version);
+		try {
+			FileWriter file = new FileWriter(getWorldPath() + "datapackdownloader.json");
+			file.write(String.valueOf(this.datapackDownloaderData));
+			file.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void deleteJson(String slug) {
+		this.datapackDownloaderData.remove(slug);
+		try {
+			FileWriter file = new FileWriter(getWorldPath() + "datapackdownloader.json");
+			file.write(String.valueOf(this.datapackDownloaderData));
+			file.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public boolean isOutdated(String slug, String version) {
+		if (this.datapackDownloaderData == null || this.datapackDownloaderData.get(slug) == null) {
+			return false;
+		}
+		return !this.datapackDownloaderData.get(slug).getAsString().equals(version);
 	}
 	
 	protected String getDatapackPath(String slug) {
@@ -209,10 +264,18 @@ public class InstallDatapackScreen extends Screen {
 			return tempPath + "/" + slug + ".zip";
 		}
 
-		if (this.worldList.getSelected().equals("Global Datapack (mod)")) {
-			return FabricLoader.getInstance().getGameDir().resolve("datapacks") + "/"+ slug + ".zip";
+		return this.getWorldPath() + slug + ".zip";
+	}
+
+	protected String getWorldPath() {
+		if (this.client == null) {
+			return "";
 		}
 
-		return this.client.getLevelStorage().getSavesDirectory().toAbsolutePath() + "/" + this.worldList.getSelected() + "/datapacks/" + slug + ".zip";
+		if (this.worldList.getSelected().equals("Global Datapack (mod)")) {
+			return FabricLoader.getInstance().getGameDir().resolve("datapacks") + "/";
+		}
+
+		return this.client.getLevelStorage().getSavesDirectory().toAbsolutePath() + "/" + this.worldList.getSelected() + "/datapacks/";
 	}
 }
