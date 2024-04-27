@@ -5,10 +5,14 @@ import com.foxyjr.dpdownloader.Mod;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Overlay;
+import net.minecraft.client.gui.screen.ProgressScreen;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.SplashOverlay;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
+import net.minecraft.util.ProgressListener;
 import org.apache.commons.io.FileUtils;
 import org.lwjgl.glfw.GLFW;
 
@@ -189,14 +193,15 @@ public class InstallDatapackScreen extends Screen {
 			return;
 		}
 		VersionInfo version = versions.get(0);
+
 		for (FileInfo file : version.files) {
 			String url = file.url;
 			try {
-				FileUtils.copyURLToFile(new URL(url), new File(getDatapackPath(slug)));
-				writeJson(slug, latest_version);
-			} catch (IOException e) {
-				return;
+				FileUtils.copyURLToFile(new URI(url).toURL(), new File(getDatapackPath(slug)));
+			} catch (IOException | URISyntaxException e) {
+				e.printStackTrace();
 			}
+			writeJson(slug, latest_version);
 		}
 	}
 
