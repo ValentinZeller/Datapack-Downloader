@@ -277,6 +277,10 @@ public class InstallDatapackScreen extends Screen {
 			return "";
 		}
 
+		if (this.worldList.getSelected() == null) {
+			return "";
+		}
+
 		if (this.worldList.getSelected().equals("Global Datapack (mod)")) {
 			return FabricLoader.getInstance().getGameDir().resolve("datapacks") + "/";
 		}
