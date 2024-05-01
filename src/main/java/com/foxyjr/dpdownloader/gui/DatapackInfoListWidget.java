@@ -43,7 +43,7 @@ public class DatapackInfoListWidget extends EntryListWidget<DatapackInfoListWidg
         }
     }
 
-    public class DatapackInfoEntry extends EntryListWidget.Entry<DatapackInfoEntry> {
+    public class DatapackInfoEntry extends Entry<DatapackInfoEntry> {
         private final MinecraftClient client;
         private final DatapackInfo info;
 

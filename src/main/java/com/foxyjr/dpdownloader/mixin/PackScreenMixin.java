@@ -10,6 +10,7 @@ import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -18,13 +19,15 @@ import java.nio.file.Path;
 
 @Mixin(PackScreen.class)
 public class PackScreenMixin {
+    @Unique
     ButtonWidget installDatapackButton;
 
     @Final @Shadow private Path file;
 
     @Inject(at = @At("HEAD"), method = "init")
     public void injectInit(CallbackInfo ci) {
-        if (((PackScreen)(Object)this).getTitle().equals(Text.translatable("dataPack.title"))) {
+        if (((PackScreen)(Object)this).getTitle().equals(Text.translatable("dataPack.title"))) //noinspection UnreachableCode
+        {
             MinecraftClient client = MinecraftClient.getInstance();
             Screen currentScreen = client.currentScreen;
             int y = ((Screen)(Object)this).height - 48;
@@ -37,7 +40,7 @@ public class PackScreenMixin {
                                 assert file != null;
                                 MinecraftClient.getInstance().setScreen(new InstallDatapackScreen(currentScreen, file.toString()));
                             }
-                    ).dimensions(((Screen) (Object) this).width / 2 - 70, y + 24, 140, 20)
+                    ).dimensions(180, y + 22, 140, 20)
                             .tooltip(Tooltip.of(Text.translatable("datapackdownloader.download.warning")))
                             .build());
         }

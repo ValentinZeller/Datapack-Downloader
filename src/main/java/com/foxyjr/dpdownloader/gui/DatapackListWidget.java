@@ -8,8 +8,6 @@ import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +19,7 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 	public DatapackListWidget(InstallDatapackScreen screen, MinecraftClient client) {
 		super(client, screen.width/2 - 10, screen.height - 110,  70,  50);
 		this.screen = screen;
-		if (screen.worldList.getSelectedOrNull() != null || !screen.worldList.tempPath.equals("")) {
+		if (screen.worldList.getSelectedOrNull() != null || !screen.worldList.tempPath.isEmpty()) {
 			this.updateDatapacks(this.screen.fetchProjects(0), true);
 		}
 	}
@@ -30,9 +28,8 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 	public int getRowWidth() {
 		return this.width;
 	}
-	
-	@Override
-	protected int getScrollbarPositionX() {
+
+	protected int getScrollbarX() {
 		return this.getRight() - 5;
 	}
 	
@@ -47,7 +44,7 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 
 		this.screen.readJson();
 		resultInfo.hits().forEach(info -> this.addEntry(new DatapackEntry(this.screen, this.client, info)));
-		this.resultsFound = resultInfo.hits().size() != 0 || !isInit;
+		this.resultsFound = !resultInfo.hits().isEmpty() || !isInit;
 	}
 	
 	public List<DatapackInfo> getDatapacks() {
@@ -66,7 +63,7 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 
 	@Override
 	public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-		if (this.screen.worldList.getSelectedOrNull() == null && this.screen.worldList.tempPath.equals("")) {
+		if (this.screen.worldList.getSelectedOrNull() == null && this.screen.worldList.tempPath.isEmpty()) {
 			context.drawTextWithShadow(this.client.textRenderer, Text.translatable("datapackdownloader.error.datapack.world"), this.getX() + this.width / 2 - 40, this.getY() + 20, 0xAA0000);
 			return;
 		}
@@ -81,7 +78,7 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 		this.updateDatapacks(new ResultInfo(datapackInfo), true);
 	}
 	
-	public class DatapackEntry extends AlwaysSelectedEntryListWidget.Entry<DatapackEntry> {
+	public class DatapackEntry extends Entry<DatapackEntry> {
 		private final InstallDatapackScreen screen;
 		private final MinecraftClient client;
 		private final DatapackInfo info;

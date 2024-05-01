@@ -15,14 +15,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DatapackWorldListWidget extends AlwaysSelectedEntryListWidget<DatapackWorldListWidget.WorldEntry> {
-	final List<DatapackWorldListWidget.WorldEntry> worlds = new ArrayList<>();
+	final List<WorldEntry> worlds = new ArrayList<>();
 	String search = "";
 	String tempPath;
 	
 	public DatapackWorldListWidget(InstallDatapackScreen parent, MinecraftClient client, String temp) {
 		super(client, 120 + 12, 100, 70, 12);
 		tempPath = temp;
-		if (tempPath.equals("")) {
+		if (tempPath.isEmpty()) {
 			this.loadLevels();
 		}
 
@@ -55,7 +55,7 @@ public class DatapackWorldListWidget extends AlwaysSelectedEntryListWidget<Datap
 	}
 	
 	public void setSearch(String search) {
-		if (this.worlds.size() != 0) {
+		if (!this.worlds.isEmpty()) {
 			this.showSummaries(search, this.worlds);
 		}
 		this.search = search;
@@ -79,9 +79,8 @@ public class DatapackWorldListWidget extends AlwaysSelectedEntryListWidget<Datap
 	public int getRowWidth() {
 		return this.width;
 	}
-	
-	@Override
-	protected int getScrollbarPositionX() {
+
+	protected int getScrollbarX() {
 		return this.getRight() - 5;
 	}
 	
@@ -93,7 +92,7 @@ public class DatapackWorldListWidget extends AlwaysSelectedEntryListWidget<Datap
 		return selected.worldName;
 	}
 	
-	public class WorldEntry extends AlwaysSelectedEntryListWidget.Entry<WorldEntry> {
+	public class WorldEntry extends Entry<WorldEntry> {
 		private final MinecraftClient client;
 		private final String worldName;
 		
