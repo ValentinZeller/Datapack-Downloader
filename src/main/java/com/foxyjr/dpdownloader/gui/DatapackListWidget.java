@@ -64,11 +64,11 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 	@Override
 	public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
 		if (this.screen.worldList.getSelectedOrNull() == null && this.screen.worldList.tempPath.isEmpty()) {
-			context.drawTextWithShadow(this.client.textRenderer, Text.translatable("datapackdownloader.error.datapack.world"), this.getX() + this.width / 2 - 40, this.getY() + 20, 0xAA0000);
+			context.drawTextWithShadow(this.client.textRenderer, Text.translatable("datapackdownloader.error.datapack.world"), this.getX() + this.width / 2 - 40, this.getY() + 20, 0xFFAA0000);
 			return;
 		}
 		if (!this.resultsFound) {
-			context.drawTextWithShadow(this.client.textRenderer, Text.translatable("datapackdownloader.error.datapack.result"), this.getX() + this.width / 2 - 40, this.getY() + 20, 0xAA0000);
+			context.drawTextWithShadow(this.client.textRenderer, Text.translatable("datapackdownloader.error.datapack.result"), this.getX() + this.width / 2 - 40, this.getY() + 20, 0xFFAA0000);
 			return;
 		}
 		super.renderWidget(context, mouseX, mouseY, delta);
@@ -112,9 +112,9 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 			this.x = x;
 			this.y = y;
 			this.width = entryWidth;
-			context.drawTextWithShadow(this.client.textRenderer, this.info.title, x+5, y+5, 0xFFFFFF);
-			context.drawTextWithShadow(this.client.textRenderer, this.info.author, x+5, y + 17, 0x999999);
-			context.drawTextWithShadow(this.client.textRenderer, client.textRenderer.trimToWidth(this.info.description, width - 15), x+5, y + 30, 0x777777);
+			context.drawTextWithShadow(this.client.textRenderer, this.info.title, x+5, y+5, 0xFFFFFFFF);
+			context.drawTextWithShadow(this.client.textRenderer, this.info.author, x+5, y + 17, 0xFF999999);
+			context.drawTextWithShadow(this.client.textRenderer, client.textRenderer.trimToWidth(this.info.description, width - 15), x+5, y + 30, 0xFF777777);
 			installButton.setX(entryWidth + 100);
 			installButton.setY(y);
 			installButton.render(context, mouseX, mouseY, tickDelta);

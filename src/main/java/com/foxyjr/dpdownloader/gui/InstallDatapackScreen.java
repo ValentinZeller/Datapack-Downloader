@@ -5,21 +5,17 @@ import com.foxyjr.dpdownloader.Mod;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Overlay;
-import net.minecraft.client.gui.screen.ProgressScreen;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.SplashOverlay;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.text.Text;
-import net.minecraft.util.ProgressListener;
 import org.apache.commons.io.FileUtils;
 import org.lwjgl.glfw.GLFW;
 
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -122,18 +118,18 @@ public class InstallDatapackScreen extends Screen {
 	@Override
 	public void render(DrawContext context, int mouseX, int mouseY, float delta) {
 		super.render(context, mouseX, mouseY, delta);
-		this.renderBackground(context, mouseX, mouseY, delta);
-		context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 15, 0xFFFFFF);
-		context.drawTextWithShadow(this.textRenderer, Text.translatable("datapackdownloader.label.search.datapacks"), 120 + 12 + 28 + 5, 26, 0xA0A0A0);
-		context.drawTextWithShadow(this.textRenderer, Text.translatable("datapackdownloader.label.results", this.totalResult), width / 2, height - 25, 0xA0A0A0);
 
+		context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 15, 0xFFFFFFFF);
+		context.drawTextWithShadow(this.textRenderer, Text.translatable("datapackdownloader.label.search.datapacks"), 120 + 12 + 28 + 5, 26, 0xFFA0A0A0);
+		context.drawTextWithShadow(this.textRenderer, Text.translatable("datapackdownloader.label.results", this.totalResult), width / 2, height - 25, 0xFFA0A0A0);
+		
 		if (tempPath.equals("")) {
 			this.searchWorldsField.render(context, mouseX, mouseY, delta);
-			context.drawTextWithShadow(this.textRenderer, Text.translatable("datapackdownloader.label.search.worlds"), 28, 26, 0xA0A0A0);
+			context.drawTextWithShadow(this.textRenderer, Text.translatable("datapackdownloader.label.search.worlds"), 28, 26, 0xFFA0A0A0);
 			this.worldList.render(context, mouseX, mouseY, delta);
 		} else {
 			for(int i = 0; i < (client != null ? client.textRenderer.wrapLines(Text.translatable("datapackdownloader.download.warning"), 132 - 10).size() : 0); i++) {
-				context.drawTextWithShadow(this.client.textRenderer, client.textRenderer.wrapLines(Text.translatable("datapackdownloader.download.warning"), 132 - 10).get(i), 28, 30 + 10 * i, 0xFFFFFF);
+				context.drawTextWithShadow(this.client.textRenderer, client.textRenderer.wrapLines(Text.translatable("datapackdownloader.download.warning"), 132 - 10).get(i), 28, 30 + 10 * i, 0xFFFFFFFF);
 			}
 		}
 

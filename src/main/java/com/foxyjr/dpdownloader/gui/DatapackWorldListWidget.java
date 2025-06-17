@@ -103,7 +103,7 @@ public class DatapackWorldListWidget extends AlwaysSelectedEntryListWidget<Datap
 
 		@Override
 		public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-			context.drawTextWithShadow(this.client.textRenderer, this.worldName, x, y, 0xFFFFFF);
+			context.drawTextWithShadow(this.client.textRenderer, this.worldName, x, y, 0xFFFFFFFF);
 		}
 		
 		@Override
