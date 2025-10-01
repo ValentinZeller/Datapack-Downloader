@@ -1,6 +1,7 @@
 package com.foxyjr.dpdownloader.gui;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -50,7 +51,7 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 	public List<DatapackInfo> getDatapacks() {
 		List<DatapackInfo> result = new ArrayList<>();
 		for (int i = 0; i < this.getEntryCount(); i++) {
-			result.add(this.getEntry(i).info);
+			result.add(this.getEntryAtPosition(i,0).info);
 		}
 		return result;
 	}
@@ -108,32 +109,12 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 		}
 		
 		@Override
-		public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-			this.x = x;
-			this.y = y;
-			this.width = entryWidth;
-			context.drawTextWithShadow(this.client.textRenderer, this.info.title, x+5, y+5, 0xFFFFFFFF);
-			context.drawTextWithShadow(this.client.textRenderer, this.info.author, x+5, y + 17, 0xFF999999);
-			context.drawTextWithShadow(this.client.textRenderer, client.textRenderer.trimToWidth(this.info.description, width - 15), x+5, y + 30, 0xFF777777);
-			installButton.setX(entryWidth + 100);
-			installButton.setY(y);
-			installButton.render(context, mouseX, mouseY, tickDelta);
-			if (this.installed) {
-				this.installButton.setMessage(Text.translatable("datapackdownloader.button.datapack.uninstall"));
-				if (this.screen.isOutdated(info.slug,info.latest_version)) {
-					this.updateButton.setPosition(entryWidth + 50, y);
-					this.updateButton.render(context, mouseX, mouseY, tickDelta);
-				}
-			} else {
-				this.installButton.setMessage(Text.translatable("datapackdownloader.button.datapack.install"));
-			}
-		}
-		
-		@Override
-		public boolean mouseClicked(double mouseX, double mouseY, int button) {
-			if (button != 0) {
+		public boolean mouseReleased(Click click) {
+			if (click.button() != 0) {
 				return false;
 			}
+			var mouseX = click.x();
+			var mouseY = click.y();
 			if (mouseX > this.x + this.width - 55 && mouseX < this.x + this.width + 5 && mouseY > this.y - 5 && mouseY < this.y + 20) {
 				if (this.installed) {
 					if (!this.screen.uninstallDatapack(this.info.slug)) {
@@ -156,6 +137,27 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 		@Override
 		public Text getNarration() {
 			return Text.translatable("datapackdownloader.narration.datapack");
+		}
+
+		@Override
+		public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+			x = getContentX();
+			y = getContentY();
+			width = getContentWidth();
+			context.drawTextWithShadow(this.client.textRenderer, this.info.title, x+5, y+5, 0xFFFFFFFF);
+			context.drawTextWithShadow(this.client.textRenderer, this.info.author, x+5, y + 17, 0xFF999999);
+			context.drawTextWithShadow(this.client.textRenderer, client.textRenderer.trimToWidth(this.info.description, width - 15), x+5, y + 30, 0xFF777777);
+			installButton.setPosition(width + 100, y);
+			installButton.render(context, mouseX, mouseY, deltaTicks);
+			if (this.installed) {
+				this.installButton.setMessage(Text.translatable("datapackdownloader.button.datapack.uninstall"));
+				if (this.screen.isOutdated(info.slug,info.latest_version)) {
+					this.updateButton.setPosition(width + 50, y);
+					this.updateButton.render(context, mouseX, mouseY, deltaTicks);
+				}
+			} else {
+				this.installButton.setMessage(Text.translatable("datapackdownloader.button.datapack.install"));
+			}
 		}
 	}
 }

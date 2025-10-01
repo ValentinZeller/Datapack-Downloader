@@ -8,7 +8,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.TextWidget;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.Text;
 import org.apache.commons.io.FileUtils;
 import org.lwjgl.glfw.GLFW;
@@ -123,7 +123,7 @@ public class InstallDatapackScreen extends Screen {
 		context.drawTextWithShadow(this.textRenderer, Text.translatable("datapackdownloader.label.search.datapacks"), 120 + 12 + 28 + 5, 26, 0xFFA0A0A0);
 		context.drawTextWithShadow(this.textRenderer, Text.translatable("datapackdownloader.label.results", this.totalResult), width / 2, height - 25, 0xFFA0A0A0);
 		
-		if (tempPath.equals("")) {
+		if (tempPath.isEmpty()) {
 			this.searchWorldsField.render(context, mouseX, mouseY, delta);
 			context.drawTextWithShadow(this.textRenderer, Text.translatable("datapackdownloader.label.search.worlds"), 28, 26, 0xFFA0A0A0);
 			this.worldList.render(context, mouseX, mouseY, delta);
@@ -154,12 +154,12 @@ public class InstallDatapackScreen extends Screen {
 	}
 
 	@Override
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		if (client != null && keyCode == GLFW.GLFW_KEY_ESCAPE) {
+	public boolean keyPressed(KeyInput keyInput) {
+		if (client != null && keyInput.key() ==  GLFW.GLFW_KEY_ESCAPE) {
 			this.client.setScreen(this.parent);
 			return true;
 		}
-		return super.keyPressed(keyCode, scanCode, modifiers);
+		return super.keyPressed(keyInput);
 	}
 	
 	public void installDatapack(String slug, String latest_version) {
@@ -184,11 +184,11 @@ public class InstallDatapackScreen extends Screen {
 			return;
 		}
 		List<VersionInfo> versions = Arrays.stream(new Gson().fromJson(response.body(), VersionInfo[].class)).toList();
-		if (versions.size() == 0) {
+		if (versions.isEmpty() ) {
 			Mod.LOGGER.error("Something went wrong!");
 			return;
 		}
-		VersionInfo version = versions.get(0);
+		VersionInfo version = versions.getFirst();
 
 		for (FileInfo file : version.files) {
 			String url = file.url;
@@ -257,11 +257,11 @@ public class InstallDatapackScreen extends Screen {
 	}
 	
 	protected String getDatapackPath(String slug) {
-		if (this.client == null || (this.worldList.getSelected() == null && tempPath.equals(""))) {
+		if (this.client == null || (this.worldList.getSelected() == null && tempPath.isEmpty())) {
 			return "";
 		}
 
-		if (!tempPath.equals("")) {
+		if (!tempPath.isEmpty()) {
 			return tempPath + "/" + slug + ".zip";
 		}
 

@@ -3,6 +3,7 @@ package com.foxyjr.dpdownloader.gui;
 import com.foxyjr.dpdownloader.Mod;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.FatalErrorScreen;
 import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
@@ -102,19 +103,19 @@ public class DatapackWorldListWidget extends AlwaysSelectedEntryListWidget<Datap
 		}
 
 		@Override
-		public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-			context.drawTextWithShadow(this.client.textRenderer, this.worldName, x, y, 0xFFFFFFFF);
-		}
-		
-		@Override
 		public Text getNarration() {
 			return Text.translatable("datapackdownloader.narration.world");
 		}
-		
+
 		@Override
-		public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		public boolean mouseReleased(Click click) {
 			DatapackWorldListWidget.this.setSelected(this);
 			return true;
+		}
+
+		@Override
+		public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+			context.drawTextWithShadow(this.client.textRenderer, this.worldName, getX(), getY(), 0xFFFFFFFF);
 		}
 	}
 }
