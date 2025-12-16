@@ -3,7 +3,6 @@ package com.foxyjr.dpdownloader.gui;
 import com.google.gson.*;
 import com.foxyjr.dpdownloader.Mod;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -51,11 +50,11 @@ public class InstallDatapackScreen extends Screen {
 	}
 
 	@Override
-	public void resize(MinecraftClient client, int width, int height) {
+	public void resize(int width, int height) {
 		String oldSearchDatapacksField = this.searchDatapacksField.getText();
 		String oldSearchWorldsField = this.searchWorldsField.getText();
 		List<DatapackInfo> oldDatapackInfo = this.datapackList.getDatapacks();
-		this.init(client, width, height);
+		this.init(width, height);
 		this.searchDatapacksField.setText(oldSearchDatapacksField);
 		this.searchWorldsField.setText(oldSearchWorldsField);
 		this.datapackList.setDatapacks(oldDatapackInfo);
