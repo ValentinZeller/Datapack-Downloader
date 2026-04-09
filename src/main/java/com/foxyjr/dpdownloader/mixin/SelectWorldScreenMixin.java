@@ -1,11 +1,11 @@
 package com.foxyjr.dpdownloader.mixin;
 
 import com.foxyjr.dpdownloader.gui.InstallDatapackScreen;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.world.SelectWorldScreen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -16,7 +16,7 @@ public class SelectWorldScreenMixin {
 
     @Inject(at = @At("TAIL"), method = "init")
 	public void injectInit(CallbackInfo ci) {
-        ButtonWidget installDatapackButton = ((SelectWorldScreen) (Object) this).addDrawableChild(ButtonWidget.builder(Text.translatable("datapackdownloader.title"), button -> MinecraftClient.getInstance().setScreen(new InstallDatapackScreen((SelectWorldScreen) (Object) this))).dimensions(((Screen) (Object) this).width / 2 - 200, 22, 95, 20).build());
+        Button installDatapackButton = ((SelectWorldScreen) (Object) this).addRenderableWidget(Button.builder(Component.translatable("datapackdownloader.title"), button -> Minecraft.getInstance().setScreen(new InstallDatapackScreen((SelectWorldScreen) (Object) this))).bounds(((Screen) (Object) this).width / 2 - 200, 22, 95, 20).build());
 	}
 
 }

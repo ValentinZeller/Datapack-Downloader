@@ -3,13 +3,14 @@ package com.foxyjr.dpdownloader.gui;
 import com.google.gson.*;
 import com.foxyjr.dpdownloader.Mod;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.network.chat.Component;
 import org.apache.commons.io.FileUtils;
+import org.jspecify.annotations.NonNull;
 import org.lwjgl.glfw.GLFW;
 
 import java.io.*;
@@ -25,11 +26,11 @@ import java.util.*;
 
 public class InstallDatapackScreen extends Screen {
 	public int totalResult = 0;
-	private TextFieldWidget searchDatapacksField;
-	private TextFieldWidget searchWorldsField;
-	private ButtonWidget searchButton;
-	private ButtonWidget moreButton;
-	private ButtonWidget backButton;
+	private EditBox searchDatapacksField;
+	private EditBox searchWorldsField;
+	private Button searchButton;
+	private Button moreButton;
+	private Button backButton;
 	private final Screen parent;
 	public DatapackWorldListWidget worldList;
 	public DatapackListWidget datapackList;
@@ -39,65 +40,61 @@ public class InstallDatapackScreen extends Screen {
 	private JsonObject datapackDownloaderData = new JsonObject();
 	
 	public InstallDatapackScreen(Screen parent) {
-		super(Text.translatable("datapackdownloader.title"));
+		super(Component.translatable("datapackdownloader.title"));
 		this.parent = parent;
 	}
 
 	public InstallDatapackScreen(Screen parent, String tempPath) {
-		super(Text.translatable("datapackdownloader.title"));
+		super(Component.translatable("datapackdownloader.title"));
 		this.parent = parent;
 		this.tempPath = tempPath;
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		String oldSearchDatapacksField = this.searchDatapacksField.getText();
-		String oldSearchWorldsField = this.searchWorldsField.getText();
+		String oldSearchDatapacksField = this.searchDatapacksField.getValue();
+		String oldSearchWorldsField = this.searchWorldsField.getValue();
 		List<DatapackInfo> oldDatapackInfo = this.datapackList.getDatapacks();
 		this.init(width, height);
-		this.searchDatapacksField.setText(oldSearchDatapacksField);
-		this.searchWorldsField.setText(oldSearchWorldsField);
+		this.searchDatapacksField.setValue(oldSearchDatapacksField);
+		this.searchWorldsField.setValue(oldSearchWorldsField);
 		this.datapackList.setDatapacks(oldDatapackInfo);
 	}
 
 	@Override
-	public void close() {
-		assert client != null;
-		client.setScreen(parent);
+	public void onClose() {
+        minecraft.setScreen(parent);
 	}
 	
 	@Override
 	protected void init() {
-		this.searchDatapacksField = new TextFieldWidget(this.textRenderer, 120 + 12 + 28 + 5, 38, this.width - (28 * 2) - (120 + 12 + 5) - 56, 20, Text.translatable("datapackdownloader.field.search.datapack"));
-		this.searchWorldsField = new TextFieldWidget(this.textRenderer, 28, 38, 132, 20, Text.translatable("datapackdownloader.field.search.world"));
-		this.searchWorldsField.setChangedListener(search -> this.worldList.setSearch(search));
-		this.searchButton = ButtonWidget.builder(Text.translatable("datapackdownloader.button.search"), button -> this.datapackList.updateDatapacks(this.fetchProjects(0), true)).dimensions(120 + 12 + 28 + 5 + (this.width - (28 * 2) - (120 + 12 + 5)) - 50, 36, 50, 24).build();
-		this.moreButton = ButtonWidget.builder(Text.translatable("datapackdownloader.button.results"), button -> this.datapackList.updateDatapacks(this.fetchProjects(100*this.datapackList.moreIndex), false)).dimensions(28, height - 30, 100, 24).build();
-		this.backButton = ButtonWidget.builder(Text.translatable("datapackdownloader.button.back"), button -> this.close()).dimensions(width - 60, height -28, 50, 20).build();
-		this.worldList = new DatapackWorldListWidget(this, this.client, tempPath);
+		this.searchDatapacksField = new EditBox(this.font, 120 + 12 + 28 + 5, 38, this.width - (28 * 2) - (120 + 12 + 5) - 56, 20, Component.translatable("datapackdownloader.field.search.datapack"));
+		this.searchWorldsField = new EditBox(this.font, 28, 38, 132, 20, Component.translatable("datapackdownloader.field.search.world"));
+		this.searchWorldsField.setResponder(search -> this.worldList.setSearch(search));
+		this.searchButton = Button.builder(Component.translatable("datapackdownloader.button.search"), button -> this.datapackList.updateDatapacks(this.fetchProjects(0), true)).bounds(120 + 12 + 28 + 5 + (this.width - (28 * 2) - (120 + 12 + 5)) - 50, 36, 50, 24).build();
+		this.moreButton = Button.builder(Component.translatable("datapackdownloader.button.results"), button -> this.datapackList.updateDatapacks(this.fetchProjects(100*this.datapackList.moreIndex), false)).bounds(28, height - 30, 100, 24).build();
+		this.backButton = Button.builder(Component.translatable("datapackdownloader.button.back"), button -> this.onClose()).bounds(width - 60, height -28, 50, 20).build();
+		this.worldList = new DatapackWorldListWidget(this, this.minecraft, tempPath);
 		this.worldList.setX(28);
-		this.datapackList = new DatapackListWidget(this, this.client);
+		this.datapackList = new DatapackListWidget(this, this.minecraft);
 		this.datapackList.setX(28 + 120 + 12 + 5);
-		this.datapackInfoList = new DatapackInfoListWidget(this, this.client);
+		this.datapackInfoList = new DatapackInfoListWidget(this, this.minecraft);
 		this.datapackInfoList.setX(width/2 + 160);
-		this.addSelectableChild(this.searchDatapacksField);
-		this.addSelectableChild(this.searchWorldsField);
-		this.addSelectableChild(this.searchButton);
-		this.addSelectableChild(this.worldList);
-		this.addSelectableChild(this.datapackList);
-		this.addSelectableChild(this.datapackInfoList);
-		this.addSelectableChild(this.moreButton);
-		this.addSelectableChild(this.backButton);
+		this.addWidget(this.searchDatapacksField);
+		this.addWidget(this.searchWorldsField);
+		this.addWidget(this.searchButton);
+		this.addWidget(this.worldList);
+		this.addWidget(this.datapackList);
+		this.addWidget(this.datapackInfoList);
+		this.addWidget(this.moreButton);
+		this.addWidget(this.backButton);
 	}
 
 	public ResultInfo fetchProjects(int offset) {
-		if (this.client == null) {
-			return new ResultInfo(List.of());
-		}
-		URI uri;
+        URI uri;
 		try {
 			String version = FabricLoader.getInstance().getModContainer("minecraft").orElseThrow(() -> new RuntimeException("Failed to get minecraft mod info?")).getMetadata().getVersion().getFriendlyString();
-			String encodedQuery = URLEncoder.encode(this.searchDatapacksField.getText(), StandardCharsets.UTF_8);
+			String encodedQuery = URLEncoder.encode(this.searchDatapacksField.getValue(), StandardCharsets.UTF_8);
 			uri = new URI("https://api.modrinth.com/v2/search?query=" + encodedQuery + "&limit=100&offset=" + offset +"&facets=%5B%5B%22categories%3Adatapack%22%5D%2C%5B%22versions%3A" + version + "%22%5D%5D");
 		} catch (URISyntaxException e) {
 			Mod.LOGGER.error(e.getMessage());
@@ -115,58 +112,55 @@ public class InstallDatapackScreen extends Screen {
 	}
 	
 	@Override
-	public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-		super.render(context, mouseX, mouseY, delta);
+	public void extractRenderState(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+		super.extractRenderState(context, mouseX, mouseY, delta);
 
-		context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 15, 0xFFFFFFFF);
-		context.drawTextWithShadow(this.textRenderer, Text.translatable("datapackdownloader.label.search.datapacks"), 120 + 12 + 28 + 5, 26, 0xFFA0A0A0);
-		context.drawTextWithShadow(this.textRenderer, Text.translatable("datapackdownloader.label.results", this.totalResult), width / 2, height - 25, 0xFFA0A0A0);
+		context.centeredText(this.font, this.title, this.width / 2, 15, 0xFFFFFFFF);
+		context.text(this.font, Component.translatable("datapackdownloader.label.search.datapacks"), 120 + 12 + 28 + 5, 26, 0xFFA0A0A0);
+		context.text(this.font, Component.translatable("datapackdownloader.label.results", this.totalResult), width / 2, height - 25, 0xFFA0A0A0);
 		
 		if (tempPath.isEmpty()) {
-			this.searchWorldsField.render(context, mouseX, mouseY, delta);
-			context.drawTextWithShadow(this.textRenderer, Text.translatable("datapackdownloader.label.search.worlds"), 28, 26, 0xFFA0A0A0);
-			this.worldList.render(context, mouseX, mouseY, delta);
+			this.searchWorldsField.extractRenderState(context, mouseX, mouseY, delta);
+			context.text(this.font, Component.translatable("datapackdownloader.label.search.worlds"), 28, 26, 0xFFA0A0A0);
+			this.worldList.extractRenderState(context, mouseX, mouseY, delta);
 		} else {
-			for(int i = 0; i < (client != null ? client.textRenderer.wrapLines(Text.translatable("datapackdownloader.download.warning"), 132 - 10).size() : 0); i++) {
-				context.drawTextWithShadow(this.client.textRenderer, client.textRenderer.wrapLines(Text.translatable("datapackdownloader.download.warning"), 132 - 10).get(i), 28, 30 + 10 * i, 0xFFFFFFFF);
+			for(int i = 0; i < minecraft.font.split(Component.translatable("datapackdownloader.download.warning"), 132 - 10).size(); i++) {
+				context.text(this.minecraft.font, minecraft.font.split(Component.translatable("datapackdownloader.download.warning"), 132 - 10).get(i), 28, 30 + 10 * i, 0xFFFFFFFF);
 			}
 		}
 
-		this.datapackList.render(context, mouseX, mouseY, delta);
+		this.datapackList.extractRenderState(context, mouseX, mouseY, delta);
 		if (this.width >= 800) {
-			this.datapackInfoList.renderWidget(context, mouseX, mouseY, delta);
+			this.datapackInfoList.extractWidgetRenderState(context, mouseX, mouseY, delta);
 		} else {
 			this.datapackList.setWidth(this.width - 200);
 		}
-		this.searchButton.render(context, mouseX, mouseY, delta);
-		this.moreButton.render(context, mouseX, mouseY, delta);
-		this.backButton.render(context, mouseX, mouseY, delta);
-		this.searchDatapacksField.render(context, mouseX, mouseY, delta);
+		this.searchButton.extractRenderState(context, mouseX, mouseY, delta);
+		this.moreButton.extractRenderState(context, mouseX, mouseY, delta);
+		this.backButton.extractRenderState(context, mouseX, mouseY, delta);
+		this.searchDatapacksField.extractRenderState(context, mouseX, mouseY, delta);
 
-		if (!Objects.equals(this.oldSelectedWorld, this.worldList.getSelected())) {
-			this.oldSelectedWorld = this.worldList.getSelected();
+		if (!Objects.equals(this.oldSelectedWorld, this.worldList.getSelectedName())) {
+			this.oldSelectedWorld = this.worldList.getSelectedName();
 			this.datapackList.updateDatapacks(fetchProjects(0), true);
 		}
-		if (this.datapackList.getSelectedOrNull() != null) {
+		if (this.datapackList.getSelected() != null) {
 			this.datapackInfoList.updateDatapack();
 		}
 	}
 
 	@Override
-	public boolean keyPressed(KeyInput keyInput) {
-		if (client != null && keyInput.key() ==  GLFW.GLFW_KEY_ESCAPE) {
-			this.client.setScreen(this.parent);
+	public boolean keyPressed(KeyEvent keyInput) {
+		if (keyInput.key() == GLFW.GLFW_KEY_ESCAPE) {
+			this.minecraft.setScreen(this.parent);
 			return true;
 		}
 		return super.keyPressed(keyInput);
 	}
 	
 	public void installDatapack(String slug, String latest_version) {
-		if (this.client == null) {
-			return;
-		}
-		
-		URI uri;
+
+        URI uri;
 		try {
 			String version = FabricLoader.getInstance().getModContainer("minecraft").orElseThrow(() -> new RuntimeException("Failed to get minecraft mod info?")).getMetadata().getVersion().getFriendlyString();
 			uri = new URI("https://api.modrinth.com/v2/project/" + slug + "/version?game_versions=%5B%22" + version + "%22%5D" + "&loaders=%5B%22datapack%22%5D");
@@ -256,7 +250,7 @@ public class InstallDatapackScreen extends Screen {
 	}
 	
 	protected String getDatapackPath(String slug) {
-		if (this.client == null || (this.worldList.getSelected() == null && tempPath.isEmpty())) {
+		if (this.worldList.getSelected() == null && tempPath.isEmpty()) {
 			return "";
 		}
 
@@ -268,18 +262,15 @@ public class InstallDatapackScreen extends Screen {
 	}
 
 	protected String getWorldPath() {
-		if (this.client == null) {
+
+        if (this.worldList.getSelected() == null) {
 			return "";
 		}
 
-		if (this.worldList.getSelected() == null) {
-			return "";
-		}
-
-		if (this.worldList.getSelected().equals("Global Datapack (mod)")) {
+		if (this.worldList.getSelectedName().equals("Global Datapack (mod)")) {
 			return FabricLoader.getInstance().getGameDir().resolve("datapacks") + "/";
 		}
 
-		return this.client.getLevelStorage().getSavesDirectory().toAbsolutePath() + "/" + this.worldList.getSelected() + "/datapacks/";
+		return this.minecraft.getLevelSource().getBaseDir().toAbsolutePath() + "/" + this.worldList.getSelectedName() + "/datapacks/";
 	}
 }

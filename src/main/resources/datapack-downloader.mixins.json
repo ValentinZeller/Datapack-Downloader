@@ -5,7 +5,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "ModMixin",
-    "PackScreenMixin"
+    "PackSelectionScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

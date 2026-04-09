@@ -1,26 +1,28 @@
 package com.foxyjr.dpdownloader.gui;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackListWidget.DatapackEntry> {
+public class DatapackListWidget extends ObjectSelectionList<DatapackListWidget.DatapackEntry> {
 	private final InstallDatapackScreen screen;
 	private boolean resultsFound = false;
 	public int moreIndex = 1;
 	
-	public DatapackListWidget(InstallDatapackScreen screen, MinecraftClient client) {
+	public DatapackListWidget(InstallDatapackScreen screen, Minecraft client) {
 		super(client, screen.width/2 - 10, screen.height - 110,  70,  50);
 		this.screen = screen;
-		if (screen.worldList.getSelectedOrNull() != null || !screen.worldList.tempPath.isEmpty()) {
+		if (screen.worldList.getSelected() != null || !screen.worldList.tempPath.isEmpty()) {
 			this.updateDatapacks(this.screen.fetchProjects(0), true);
 		}
 	}
@@ -30,7 +32,7 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 		return this.width;
 	}
 
-	protected int getScrollbarX() {
+	protected int scrollBarX() {
 		return this.getRight() - 5;
 	}
 	
@@ -44,35 +46,35 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 		}
 
 		this.screen.readJson();
-		resultInfo.hits().forEach(info -> this.addEntry(new DatapackEntry(this.screen, this.client, info)));
+		resultInfo.hits().forEach(info -> this.addEntry(new DatapackEntry(this.screen, this.minecraft, info)));
 		this.resultsFound = !resultInfo.hits().isEmpty() || !isInit;
 	}
 	
 	public List<DatapackInfo> getDatapacks() {
 		List<DatapackInfo> result = new ArrayList<>();
-		for (int i = 0; i < this.getEntryCount(); i++) {
-			result.add(this.getEntryAtPosition(i,0).info);
+		for (int i = 0; i < this.getItemCount(); i++) {
+			result.add(Objects.requireNonNull(this.getEntryAtPosition(i, 0)).info);
 		}
 		return result;
 	}
 
 	@Nullable
 	@Override
-	public DatapackEntry getSelectedOrNull() {
-		return super.getSelectedOrNull();
+	public DatapackEntry getSelected() {
+		return super.getSelected();
 	}
 
 	@Override
-	public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-		if (this.screen.worldList.getSelectedOrNull() == null && this.screen.worldList.tempPath.isEmpty()) {
-			context.drawTextWithShadow(this.client.textRenderer, Text.translatable("datapackdownloader.error.datapack.world"), this.getX() + this.width / 2 - 40, this.getY() + 20, 0xFFAA0000);
+	public void extractWidgetRenderState(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+		if (this.screen.worldList.getSelected() == null && this.screen.worldList.tempPath.isEmpty()) {
+			context.text(this.minecraft.font, Component.translatable("datapackdownloader.error.datapack.world"), this.getX() + this.width / 2 - 40, this.getY() + 20, 0xFFAA0000);
 			return;
 		}
 		if (!this.resultsFound) {
-			context.drawTextWithShadow(this.client.textRenderer, Text.translatable("datapackdownloader.error.datapack.result"), this.getX() + this.width / 2 - 40, this.getY() + 20, 0xFFAA0000);
+			context.text(this.minecraft.font, Component.translatable("datapackdownloader.error.datapack.result"), this.getX() + this.width / 2 - 40, this.getY() + 20, 0xFFAA0000);
 			return;
 		}
-		super.renderWidget(context, mouseX, mouseY, delta);
+		super.extractWidgetRenderState(context, mouseX, mouseY, delta);
 	}
 
 	public void setDatapacks(List<DatapackInfo> datapackInfo) {
@@ -81,25 +83,24 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 	
 	public class DatapackEntry extends Entry<DatapackEntry> {
 		private final InstallDatapackScreen screen;
-		private final MinecraftClient client;
+		private final Minecraft client;
 		private final DatapackInfo info;
-		private final ButtonWidget installButton;
-		private final ButtonWidget updateButton;
+		private final Button installButton;
+		private final Button updateButton;
 		private int x;
 		private int y;
 		private int width;
 		private boolean installed;
 		
-		public DatapackEntry(InstallDatapackScreen screen, MinecraftClient client, DatapackInfo info) {
+		public DatapackEntry(InstallDatapackScreen screen, Minecraft client, DatapackInfo info) {
 			this.screen = screen;
 			this.client = client;
 			this.info = info;
-			this.installButton = ButtonWidget.builder(Text.of(""), button -> {
-			}).dimensions(0, 0, 50, 15).build();
+			this.installButton = Button.builder(Component.nullToEmpty("Install"), button -> {
+			}).bounds(0, 0, 50, 15).build();
 
-			this.updateButton = ButtonWidget.builder(Text.translatable("datapackdownloader.button.datapack.update"), button -> {
-
-			}).dimensions(0, 0, 50 ,15).build();
+			this.updateButton = Button.builder(Component.translatable("datapackdownloader.button.datapack.update"), button -> {
+			}).bounds(0, 0, 50 ,15).build();
 
 			this.installed = new File(this.screen.getDatapackPath(this.info.slug)).exists();
 		}
@@ -109,7 +110,7 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 		}
 		
 		@Override
-		public boolean mouseReleased(Click click) {
+		public boolean mouseReleased(MouseButtonEvent click) {
 			if (click.button() != 0) {
 				return false;
 			}
@@ -135,28 +136,28 @@ public class DatapackListWidget extends AlwaysSelectedEntryListWidget<DatapackLi
 		}
 		
 		@Override
-		public Text getNarration() {
-			return Text.translatable("datapackdownloader.narration.datapack");
+		public @NonNull Component getNarration() {
+			return Component.translatable("datapackdownloader.narration.datapack");
 		}
 
 		@Override
-		public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+		public void extractContent(GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
 			x = getContentX();
 			y = getContentY();
 			width = getContentWidth();
-			context.drawTextWithShadow(this.client.textRenderer, this.info.title, x+5, y+5, 0xFFFFFFFF);
-			context.drawTextWithShadow(this.client.textRenderer, this.info.author, x+5, y + 17, 0xFF999999);
-			context.drawTextWithShadow(this.client.textRenderer, client.textRenderer.trimToWidth(this.info.description, width - 15), x+5, y + 30, 0xFF777777);
+			context.text(this.client.font, this.info.title, x+5, y+5, 0xFFFFFFFF);
+			context.text(this.client.font, this.info.author, x+5, y + 17, 0xFF999999);
+			context.text(this.client.font, client.font.plainSubstrByWidth(this.info.description, width - 15), x+5, y + 30, 0xFF777777);
 			installButton.setPosition(width + 100, y);
-			installButton.render(context, mouseX, mouseY, deltaTicks);
+			installButton.extractRenderState(context, mouseX, mouseY, deltaTicks);
 			if (this.installed) {
-				this.installButton.setMessage(Text.translatable("datapackdownloader.button.datapack.uninstall"));
+				this.installButton.setMessage(Component.translatable("datapackdownloader.button.datapack.uninstall"));
 				if (this.screen.isOutdated(info.slug,info.latest_version)) {
 					this.updateButton.setPosition(width + 50, y);
-					this.updateButton.render(context, mouseX, mouseY, deltaTicks);
+					this.updateButton.extractRenderState(context, mouseX, mouseY, deltaTicks);
 				}
 			} else {
-				this.installButton.setMessage(Text.translatable("datapackdownloader.button.datapack.install"));
+				this.installButton.setMessage(Component.translatable("datapackdownloader.button.datapack.install"));
 			}
 		}
 	}
