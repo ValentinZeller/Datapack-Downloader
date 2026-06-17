@@ -29,7 +29,7 @@ public class PackSelectionScreenMixin {
         if (((PackSelectionScreen)(Object)this).getTitle().equals(Component.translatable("dataPack.title"))) //noinspection UnreachableCode
         {
             Minecraft client = Minecraft.getInstance();
-            Screen currentScreen = client.screen;
+            Screen currentScreen = client.gui.screen();
             int y = ((Screen)(Object)this).height - 48;
 
             assert currentScreen != null;
@@ -38,7 +38,7 @@ public class PackSelectionScreenMixin {
                             Component.translatable("datapackdownloader.download"),
                             button -> {
                                 assert packDir != null;
-                                Minecraft.getInstance().setScreen(new InstallDatapackScreen(currentScreen, packDir.toString()));
+                                Minecraft.getInstance().gui.setScreen(new InstallDatapackScreen(currentScreen, packDir.toString()));
                             }
                     ).bounds(180, y + 22, 140, 20)
                             .tooltip(Tooltip.create(Component.translatable("datapackdownloader.download.warning")))

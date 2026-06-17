@@ -53,7 +53,7 @@ public class DatapackWorldListWidget extends ObjectSelectionList<DatapackWorldLi
 	}
 	
 	private void showUnableToLoadScreen(Component message) {
-		this.minecraft.setScreen(new ErrorScreen(Component.translatable("selectWorld.unable_to_load"), message));
+		this.minecraft.gui.setScreen(new ErrorScreen(Component.translatable("selectWorld.unable_to_load"), message));
 	}
 	
 	public void setSearch(String search) {

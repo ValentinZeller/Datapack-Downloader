@@ -63,7 +63,7 @@ public class InstallDatapackScreen extends Screen {
 
 	@Override
 	public void onClose() {
-        minecraft.setScreen(parent);
+        minecraft.gui.setScreen(parent);
 	}
 	
 	@Override
@@ -152,7 +152,7 @@ public class InstallDatapackScreen extends Screen {
 	@Override
 	public boolean keyPressed(KeyEvent keyInput) {
 		if (keyInput.key() == GLFW.GLFW_KEY_ESCAPE) {
-			this.minecraft.setScreen(this.parent);
+			this.minecraft.gui.setScreen(this.parent);
 			return true;
 		}
 		return super.keyPressed(keyInput);

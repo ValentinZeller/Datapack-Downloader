@@ -16,7 +16,7 @@ public class SelectWorldScreenMixin {
 
     @Inject(at = @At("TAIL"), method = "init")
 	public void injectInit(CallbackInfo ci) {
-        Button installDatapackButton = ((SelectWorldScreen) (Object) this).addRenderableWidget(Button.builder(Component.translatable("datapackdownloader.title"), button -> Minecraft.getInstance().setScreen(new InstallDatapackScreen((SelectWorldScreen) (Object) this))).bounds(((Screen) (Object) this).width / 2 - 200, 22, 95, 20).build());
+        Button installDatapackButton = ((SelectWorldScreen) (Object) this).addRenderableWidget(Button.builder(Component.translatable("datapackdownloader.title"), button -> Minecraft.getInstance().gui.setScreen(new InstallDatapackScreen((SelectWorldScreen) (Object) this))).bounds(((Screen) (Object) this).width / 2 - 200, 22, 95, 20).build());
 	}
 
 }
